@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Blueprint Paper
+  m_Shader: {fileID: 4800000, guid: c4e4cfa2e5d142acb1e5907c613e458b, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 0
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses:
+  - MOTIONVECTORS
+  - GRABPASS
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AlphaTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 500, y: 500}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - PixelSnap: 0
+    - _DiagonalSheen: 0.356
+    - _EnableExternalAlpha: 0
+    - _FiberStrength: 0
+    - _GridIntensity: 0.08
+    - _InkFromTexture: 0
+    - _InkStrength: 1
+    - _LineWidth: 0.001
+    - _MajorGridEvery: 4
+    - _MinorGridSize: 0.2
+    - _NoiseAmount: 0
+    - _NoiseScale: 18
+    - _Opacity: 1
+    - _TextureLumaInfluence: 0
+    - _ZWrite: 0
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _GridColor: {r: 0.239, g: 0.733, b: 0.98, a: 1}
+    - _InkColor: {r: 0.918, g: 0.98, b: 1, a: 1}
+    - _MajorGridColor: {r: 0.745, g: 0.941, b: 1, a: 1}
+    - _PaperColor: {r: 0.032, g: 0.173, b: 0.361, a: 1}
+    - _PaperHighlight: {r: 0.073, g: 0.267, b: 0.518, a: 1}
+    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

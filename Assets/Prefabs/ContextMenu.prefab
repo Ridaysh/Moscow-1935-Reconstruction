@@ -62,7 +62,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.2274, g: 0.2274, b: 0.2274, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -144,6 +144,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1856600276375971630}
     m_Modifications:
+    - target: {fileID: 2403129724696859399, guid: 104897d4d57c14f65ad84609c7f2358d, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: ecb4a911d353a454f9daed1cdead4811, type: 2}
+    - target: {fileID: 2403129724696859399, guid: 104897d4d57c14f65ad84609c7f2358d, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -6018166052867585190, guid: ecb4a911d353a454f9daed1cdead4811, type: 2}
+    - target: {fileID: 2403129724696859399, guid: 104897d4d57c14f65ad84609c7f2358d, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3945212695004694206, guid: 104897d4d57c14f65ad84609c7f2358d, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

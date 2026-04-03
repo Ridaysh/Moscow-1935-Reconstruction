@@ -11,17 +11,30 @@ public abstract class ContextMenuTargetBase : MonoBehaviour, IPointerClickHandle
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (!IsValidPrimaryClick(eventData))
+        if (!IsValidClick(eventData))
         {
             return;
         }
 
-        ShowContextMenu(eventData.position);
-        OnPrimaryClicked(eventData);
+        if (ShouldOpenContextMenu(eventData))
+        {
+            ShowContextMenu(eventData.position);
+            return;
+        }
+
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            OnPrimaryClicked(eventData);
+        }
     }
 
     protected virtual void OnPrimaryClicked(PointerEventData eventData)
     {
+    }
+
+    protected virtual bool ShouldOpenContextMenuOnLeftClick()
+    {
+        return false;
     }
 
     protected virtual GameObject GetContextActionTarget()
@@ -34,7 +47,7 @@ public abstract class ContextMenuTargetBase : MonoBehaviour, IPointerClickHandle
         return contextMenuDefinition;
     }
 
-    private void ShowContextMenu(Vector2 screenPosition)
+    protected void ShowContextMenu(Vector2 screenPosition)
     {
         ContextMenuDefinition menuDefinition = GetContextMenuDefinition();
         if (menuDefinition == null)
@@ -59,9 +72,25 @@ public abstract class ContextMenuTargetBase : MonoBehaviour, IPointerClickHandle
         contextMenu.ShowAtScreenPosition(screenPosition, _cachedActions);
     }
 
-    private bool IsValidPrimaryClick(PointerEventData eventData)
+    private bool ShouldOpenContextMenu(PointerEventData eventData)
     {
-        if (eventData == null || eventData.button != PointerEventData.InputButton.Left)
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            return true;
+        }
+
+        return eventData.button == PointerEventData.InputButton.Left && ShouldOpenContextMenuOnLeftClick();
+    }
+
+    private bool IsValidClick(PointerEventData eventData)
+    {
+        if (eventData == null)
+        {
+            return false;
+        }
+
+        if (eventData.button != PointerEventData.InputButton.Left &&
+            eventData.button != PointerEventData.InputButton.Right)
         {
             return false;
         }

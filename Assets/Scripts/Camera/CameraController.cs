@@ -4,6 +4,8 @@ using UnityEngine.InputSystem.Controls;
 
 public class CameraController : MonoBehaviour
 {
+    private static CameraController _global;
+
     [Header("Zoom")]
     [SerializeField, Min(0.01f)] private float minZoom = 2f;
     [SerializeField, Min(0.01f)] private float maxZoom = 15f;
@@ -13,15 +15,20 @@ public class CameraController : MonoBehaviour
     [Header("Smoothing")]
     [SerializeField, Min(0f)] private float smoothness = 0f;
 
+    [Header("Focus")]
+    [SerializeField, Min(0.01f)] private float focusSmoothness = 0.3f;
+
     private Camera _camera;
     private Vector3 _targetPosition;
     private float _targetZoom;
 
     private bool _isDraggingMouse;
     private Vector2 _lastMousePosition;
+    private bool _isFocusMoveActive;
 
     private void Awake()
     {
+        _global = this;
         _camera = GetComponent<Camera>();
         if (_camera == null)
         {
@@ -31,6 +38,31 @@ public class CameraController : MonoBehaviour
         _targetPosition = transform.position;
         _targetZoom = GetCurrentZoom();
         _targetZoom = Mathf.Clamp(_targetZoom, minZoom, maxZoom);
+    }
+
+    private void OnDestroy()
+    {
+        if (_global == this)
+        {
+            _global = null;
+        }
+    }
+
+    public static bool TryGetGlobal(out CameraController controller)
+    {
+        if (_global == null)
+        {
+            _global = FindAnyObjectByType<CameraController>(FindObjectsInactive.Include);
+        }
+
+        controller = _global;
+        return controller != null;
+    }
+
+    public void FocusOnWorldPosition(Vector3 worldPosition)
+    {
+        _targetPosition = new Vector3(worldPosition.x, worldPosition.y, transform.position.z);
+        _isFocusMoveActive = true;
     }
 
     private void Update()
@@ -153,16 +185,23 @@ public class CameraController : MonoBehaviour
             return;
         }
 
-        if (smoothness <= 0f)
+        float activeSmoothness = _isFocusMoveActive ? Mathf.Max(smoothness, focusSmoothness) : smoothness;
+        if (activeSmoothness <= 0f)
         {
             transform.position = _targetPosition;
             SetCurrentZoom(_targetZoom);
+            _isFocusMoveActive = false;
             return;
         }
 
-        float t = 1f - Mathf.Exp(-Time.unscaledDeltaTime / Mathf.Max(0.0001f, smoothness));
+        float t = 1f - Mathf.Exp(-Time.unscaledDeltaTime / Mathf.Max(0.0001f, activeSmoothness));
         transform.position = Vector3.Lerp(transform.position, _targetPosition, t);
         SetCurrentZoom(Mathf.Lerp(GetCurrentZoom(), _targetZoom, t));
+
+        if (_isFocusMoveActive && Vector3.Distance(transform.position, _targetPosition) <= 0.05f)
+        {
+            _isFocusMoveActive = false;
+        }
     }
 
     private float GetCurrentZoom()
