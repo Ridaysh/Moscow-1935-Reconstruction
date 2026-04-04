@@ -19,18 +19,33 @@ public class ContextMenuController : MonoBehaviour
 
     private RectTransform _rectTransform;
     private Canvas _rootCanvas;
+    private CanvasGroup _canvasGroup;
+    private UIWindowAnimator _windowAnimator;
     private readonly List<Button> _spawnedButtons = new();
     private Button _embeddedTemplateButton;
 
     private void Awake()
     {
         _rectTransform = GetComponent<RectTransform>();
+        _canvasGroup = GetComponent<CanvasGroup>();
+        if (_canvasGroup == null)
+        {
+            _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+        }
+
+        _windowAnimator = GetComponent<UIWindowAnimator>();
+        if (_windowAnimator == null)
+        {
+            _windowAnimator = gameObject.AddComponent<UIWindowAnimator>();
+        }
+
+        _windowAnimator.ApplyPreset(UIWindowAnimator.AnimationPreset.ContextMenu);
         ResolveCanvasReferences();
         ResolveButtonReferences();
 
         if (hideOnStart)
         {
-            gameObject.SetActive(false);
+            _windowAnimator.Hide(true, DeactivateMenu);
         }
     }
 
@@ -86,6 +101,7 @@ public class ContextMenuController : MonoBehaviour
         ClearSpawnedButtons();
         SetTemplateButtonVisible(_embeddedTemplateButton != null);
         PositionMenu(localPoint);
+        ShowMenu();
     }
 
     public void ShowAtScreenPosition(Vector2 screenPosition, IReadOnlyList<ContextMenuAction> actions)
@@ -108,13 +124,18 @@ public class ContextMenuController : MonoBehaviour
         }
 
         PositionMenu(localPoint);
+        ShowMenu();
     }
 
     public void Hide()
     {
-        ClearSpawnedButtons();
-        SetTemplateButtonVisible(false);
-        gameObject.SetActive(false);
+        if (_windowAnimator != null)
+        {
+            _windowAnimator.Hide(onComplete: FinalizeHide);
+            return;
+        }
+
+        FinalizeHide();
     }
 
     private bool PrepareForShow(Vector2 screenPosition, out Vector2 localPoint)
@@ -326,6 +347,37 @@ public class ContextMenuController : MonoBehaviour
         _rectTransform.anchoredPosition = clampedPosition;
     }
 
+    private void ShowMenu()
+    {
+        if (_windowAnimator != null)
+        {
+            _windowAnimator.UpdateShownStateFromCurrent();
+            _windowAnimator.Show();
+            return;
+        }
+
+        if (_canvasGroup != null)
+        {
+            _canvasGroup.alpha = 1f;
+            _canvasGroup.interactable = true;
+            _canvasGroup.blocksRaycasts = true;
+        }
+    }
+
+    private void FinalizeHide()
+    {
+        ClearSpawnedButtons();
+        SetTemplateButtonVisible(false);
+        DeactivateMenu();
+    }
+
+    private void DeactivateMenu()
+    {
+        if (gameObject.activeSelf)
+        {
+            gameObject.SetActive(false);
+        }
+    }
     private static void SetButtonLabel(Button button, string text)
     {
         if (button == null)

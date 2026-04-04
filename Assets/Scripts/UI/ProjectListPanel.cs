@@ -26,11 +26,19 @@ public class ProjectListPanel : MonoBehaviour
     private readonly List<GameObject> _spawnedItems = new();
     private readonly List<ProjectData> _availableBuffer = new();
     private CanvasGroup _canvasGroup;
+    private UIWindowAnimator _windowAnimator;
     private PanelMode _mode = PanelMode.Hidden;
 
     private void Awake()
     {
         _canvasGroup = GetComponent<CanvasGroup>();
+        _windowAnimator = GetComponent<UIWindowAnimator>();
+        if (_windowAnimator == null)
+        {
+            _windowAnimator = gameObject.AddComponent<UIWindowAnimator>();
+        }
+
+        _windowAnimator.ApplyPreset(UIWindowAnimator.AnimationPreset.SlideFromRight);
     }
 
     private void OnEnable()
@@ -53,6 +61,12 @@ public class ProjectListPanel : MonoBehaviour
 
     private void Start()
     {
+        if (_windowAnimator != null)
+        {
+            _windowAnimator.Hide(true);
+            return;
+        }
+
         SetVisible(false);
     }
 
@@ -89,6 +103,12 @@ public class ProjectListPanel : MonoBehaviour
     public void Hide()
     {
         _mode = PanelMode.Hidden;
+        if (_windowAnimator != null)
+        {
+            _windowAnimator.Hide(onComplete: ClearItems);
+            return;
+        }
+
         SetVisible(false);
         ClearItems();
     }
@@ -137,6 +157,20 @@ public class ProjectListPanel : MonoBehaviour
 
     private void SetVisible(bool isVisible)
     {
+        if (_windowAnimator != null)
+        {
+            if (isVisible)
+            {
+                _windowAnimator.Show();
+            }
+            else
+            {
+                _windowAnimator.Hide();
+            }
+
+            return;
+        }
+
         if (_canvasGroup == null)
         {
             return;

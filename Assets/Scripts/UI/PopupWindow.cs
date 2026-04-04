@@ -4,14 +4,28 @@ using UnityEngine;
 public abstract class PopupWindow : MonoBehaviour
 {
     private CanvasGroup _canvasGroup;
+    private UIWindowAnimator _windowAnimator;
 
     protected virtual void Awake()
     {
         _canvasGroup = GetComponent<CanvasGroup>();
+        _windowAnimator = GetComponent<UIWindowAnimator>();
+        if (_windowAnimator == null)
+        {
+            _windowAnimator = gameObject.AddComponent<UIWindowAnimator>();
+        }
+
+        _windowAnimator.ApplyPreset(UIWindowAnimator.AnimationPreset.ScalePopup);
     }
 
     protected virtual void Start()
     {
+        if (_windowAnimator != null)
+        {
+            _windowAnimator.Hide(true);
+            return;
+        }
+
         SetOpenFromManager(false);
     }
 
@@ -37,9 +51,23 @@ public abstract class PopupWindow : MonoBehaviour
             return;
         }
 
-        _canvasGroup.alpha = isOpen ? 1f : 0f;
-        _canvasGroup.interactable = isOpen;
-        _canvasGroup.blocksRaycasts = isOpen;
+        if (_windowAnimator != null)
+        {
+            if (isOpen)
+            {
+                _windowAnimator.Show();
+            }
+            else
+            {
+                _windowAnimator.Hide();
+            }
+        }
+        else
+        {
+            _canvasGroup.alpha = isOpen ? 1f : 0f;
+            _canvasGroup.interactable = isOpen;
+            _canvasGroup.blocksRaycasts = isOpen;
+        }
 
         OnPopupVisibilityChanged(isOpen);
     }

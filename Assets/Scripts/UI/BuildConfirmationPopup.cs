@@ -106,14 +106,18 @@ public class BuildConfirmationPopup : PopupWindow
                 : project.Description;
         }
 
+        var duration = $"Срок: {project.DurationMonths} мес.";
+
         if (costText != null)
         {
             costText.text = $"Стоимость: {BudgetSystem.FormatBudget(project.Cost)}";
+            if (durationText == null)
+                costText.text += $"\t{duration}";
         }
 
         if (durationText != null)
         {
-            durationText.text = $"Срок: {project.DurationMonths} мес.";
+            durationText.text = duration;
         }
 
         if (statusText != null)

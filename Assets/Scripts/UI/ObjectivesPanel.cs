@@ -18,11 +18,19 @@ public class ObjectivesPanel : MonoBehaviour
     private readonly List<GameObject> _spawnedItems = new();
     private readonly List<ObjectiveProgress> _buffer = new();
     private CanvasGroup _canvasGroup;
+    private UIWindowAnimator _windowAnimator;
     private bool _isVisible;
 
     private void Awake()
     {
         _canvasGroup = GetComponent<CanvasGroup>();
+        _windowAnimator = GetComponent<UIWindowAnimator>();
+        if (_windowAnimator == null)
+        {
+            _windowAnimator = gameObject.AddComponent<UIWindowAnimator>();
+        }
+
+        _windowAnimator.ApplyPreset(UIWindowAnimator.AnimationPreset.SlideFromLeft);
     }
 
     private void OnEnable()
@@ -51,7 +59,15 @@ public class ObjectivesPanel : MonoBehaviour
 
     private void Start()
     {
-        SetVisible(false);
+        if (_windowAnimator != null)
+        {
+            _windowAnimator.Hide(true);
+        }
+        else
+        {
+            SetVisible(false);
+        }
+
         UpdateTitle();
     }
 
@@ -76,6 +92,12 @@ public class ObjectivesPanel : MonoBehaviour
     public void Hide()
     {
         _isVisible = false;
+        if (_windowAnimator != null)
+        {
+            _windowAnimator.Hide(onComplete: ClearItems);
+            return;
+        }
+
         SetVisible(false);
         ClearItems();
     }
@@ -129,6 +151,20 @@ public class ObjectivesPanel : MonoBehaviour
 
     private void SetVisible(bool isVisible)
     {
+        if (_windowAnimator != null)
+        {
+            if (isVisible)
+            {
+                _windowAnimator.Show();
+            }
+            else
+            {
+                _windowAnimator.Hide();
+            }
+
+            return;
+        }
+
         if (_canvasGroup == null)
         {
             return;
